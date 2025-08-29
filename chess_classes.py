@@ -60,7 +60,27 @@ class Pawn(Piece):
 
     def getName(self):
         return(f"{self.color} pawn")
-        
+    
+    def move(self,positionBefore,positionNext):
+        piece=self.board[positionBefore]
+        if self.board[positionNext]==0:
+            
+            self.board[positionBefore]=0
+            self.board[positionNext]=piece
+        else:
+            raise MoveError("You can't move piece to there!")
+
+    def capture(self, position_before, position_next):
+        piece = self.board[position_before]
+        target_piece = self.board[position_next]
+        if target_piece != 0 and target_piece.get_color() != piece.get_color():
+            self.board[position_before] = 0
+            self.board[position_next] = piece
+            piece.position = position_next
+        elif target_piece != 0 and target_piece.get_color() == piece.get_color():
+            raise MoveError("You can't capture your own piece!")
+        else:
+            raise MoveError("There is nothing to capture!")        
 
 
 class Board:
@@ -68,7 +88,7 @@ class Board:
         self.board=np.zeros((8,8),dtype=object)
         for j in range(8):
             for i in range(8):
-                self.board[i][j]=Piece("Null")
+                self.board[i][j]=0
 
     def addPiece(self,position,piece):
         self.board[position]=piece
